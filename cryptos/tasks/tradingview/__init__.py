@@ -1,0 +1,1 @@
+from tradingview_ta import get_multiple_analysis
