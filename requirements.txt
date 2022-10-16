@@ -1,6 +1,10 @@
 Flask==2.2.2
 Flask-And-Redis==1.0.0
-celery[redis]==5.2.7
+Flask-SQLAlchemy==3.0.2
+psycopg2==2.9.4
 gevent==22.10.1
 tradingview-ta==3.3.0
 python-binance==1.0.16
+celery[redis]==5.2.7
+celery-redbeat==2.0.0
+python3-xid==1.0.5

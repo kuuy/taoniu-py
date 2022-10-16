@@ -1,1 +1,4 @@
-from tradingview_ta import get_multiple_analysis
+def autodiscover_tasks():
+  return [
+    'cryptos.tasks.tradingview.scanner',
+  ]

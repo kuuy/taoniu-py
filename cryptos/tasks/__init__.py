@@ -1,5 +1,6 @@
 from celery import Celery
-from kombu import Queue
+
+from cryptos.tasks import tradingview
 
 def make_celery(app):
   celery = Celery(
@@ -8,23 +9,14 @@ def make_celery(app):
     backend=app.config['result_backend'],
     fixups=[],
   )
-  celery.conf.task_queues = (
-    Queue(
-      'cryptos.binance.futures',
-      routing_key='cryptos.tasks.binance.futures.#'
-    ),
-    Queue(
-      'cryptos.binance.spot',
-      routing_key='cryptos.tasks.binance.spot.#'
-    ),
-    Queue(
-      'cryptos.tradingview',
-      routing_key='cryptos.tasks.tradingview.#'
-    ),
-  )
-  celery.autodiscover_tasks([
-    'cryptos.tasks.binance.futures.realtime',
-  ])
+  celery.conf.task_routes = {
+    'cryptos.tasks.tradingview.*': {
+      'queue': 'cryptos.tasks.tradingview',
+    },
+  }
+  autodiscover_tasks = []
+  autodiscover_tasks += tradingview.autodiscover_tasks()
+  celery.autodiscover_tasks(autodiscover_tasks)
   celery.conf.update(app.config)
 
   class ContextTask(celery.Task):
