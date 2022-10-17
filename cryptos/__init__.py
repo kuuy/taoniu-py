@@ -2,7 +2,6 @@ import click
 
 from flask import Flask
 from flask.cli import FlaskGroup
-from flask_migrate import Migrate
 from flask_redis import Redis
 from flask_sqlalchemy import SQLAlchemy
 
