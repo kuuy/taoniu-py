@@ -1,13 +1,13 @@
 from sqlalchemy import (
   String,
+  Boolean,
   JSON,
   Column,
   DateTime,
-  func, Boolean,
+  func,
 )
 
 from cryptos import db
-
 
 class Symbol(db.Model):
   id = Column(String(20), primary_key=True)

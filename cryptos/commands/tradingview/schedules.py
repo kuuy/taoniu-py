@@ -8,7 +8,7 @@ bp = Blueprint('schedules', __name__)
 
 @bp.cli.command()
 def apply():
-  interval = celery.schedules.schedule(run_every=60)  # seconds
+  interval = celery.schedules.schedule(run_every=60)
   entry = RedBeatSchedulerEntry(
     'tradingview-scanner-flush',
     'cryptos.tasks.tradingview.scanner.flush',

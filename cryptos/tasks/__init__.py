@@ -1,6 +1,9 @@
 from celery import Celery
 
-from cryptos.tasks import tradingview
+from cryptos.tasks import (
+  binance,
+  tradingview,
+)
 
 def make_celery(app):
   celery = Celery(
@@ -10,11 +13,15 @@ def make_celery(app):
     fixups=[],
   )
   celery.conf.task_routes = {
+    'cryptos.tasks.binance.spot.*': {
+      'queue': 'cryptos.tasks.binance.spot',
+    },
     'cryptos.tasks.tradingview.*': {
       'queue': 'cryptos.tasks.tradingview',
     },
   }
   autodiscover_tasks = []
+  autodiscover_tasks += binance.autodiscover_tasks()
   autodiscover_tasks += tradingview.autodiscover_tasks()
   celery.autodiscover_tasks(autodiscover_tasks)
   celery.conf.update(app.config)

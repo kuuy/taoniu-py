@@ -14,7 +14,7 @@ def flush(interval):
   for i in range(0, len(symbols), 50):
     scan.delay(symbols[i:i + 50], interval)
 
-@celery.task(exchange='cryptos:tradingview', time_limit=5, ignore_result=True)
+@celery.task(time_limit=5, ignore_result=True)
 def scan(symbols, interval):
   lock = redis.lock(
     'locks:tradingview:scanner:scan:{}'.format(
@@ -31,5 +31,7 @@ def scan(symbols, interval):
     if not lock.acquire():
       return
     repository.scan(symbols, interval)
+  except:
+    pass
   finally:
     lock.release()
