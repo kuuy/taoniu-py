@@ -11,7 +11,7 @@ def apply():
   interval = celery.schedules.schedule(run_every=300)
   entry = RedBeatSchedulerEntry(
     'binance-spot-klines-daily-flush-5m',
-    'cryptos.tasks.binance.spot.klines.flush',
+    'cryptos.tasks.binance.spot.klines.daily.flush',
     interval,
     args=[1],
     app=cryptos.celery
@@ -24,7 +24,7 @@ def apply():
   crontab = celery.schedules.crontab(minute=30, hour=0)
   entry = RedBeatSchedulerEntry(
     'binance-spot-klines-daily-flush',
-    'cryptos.tasks.binance.spot.klines.flush',
+    'cryptos.tasks.binance.spot.klines.daily.flush',
     crontab,
     args=[2],
     app=cryptos.celery

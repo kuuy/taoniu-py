@@ -13,8 +13,8 @@ def make_celery(app):
     fixups=[],
   )
   celery.conf.task_routes = {
-    'cryptos.tasks.binance.spot.*': {
-      'queue': 'cryptos.tasks.binance.spot',
+    'cryptos.tasks.binance.spot.klines.*': {
+      'queue': 'cryptos.tasks.binance.spot.klines',
     },
     'cryptos.tasks.tradingview.*': {
       'queue': 'cryptos.tasks.tradingview',

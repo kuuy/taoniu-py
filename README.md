@@ -5,6 +5,7 @@
 ```shell
 celery -A cryptos.celery beat -S redbeat.RedBeatScheduler
 celery -A cryptos.celery worker -c 10 -l INFO -P gevent -Q cryptos.tasks.tradingview
+celery -A cryptos.celery worker -c 10 -l INFO -P gevent -Q cryptos.tasks.binance.spot.klines
 ```
 
 # 运行
