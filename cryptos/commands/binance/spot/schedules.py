@@ -26,7 +26,7 @@ def apply():
     'binance-spot-klines-daily-flush',
     'cryptos.tasks.binance.spot.klines.daily.flush',
     crontab,
-    args=[2],
+    args=[5],
     app=cryptos.celery
   )
   try:
