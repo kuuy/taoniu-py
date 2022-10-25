@@ -19,7 +19,7 @@ def sync(symbol, limit):
       symbol,
       limit,
     ),
-    timeout=10,
+    timeout=5,
   )
   try:
     if not lock.acquire():

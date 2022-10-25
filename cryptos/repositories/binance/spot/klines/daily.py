@@ -1,5 +1,3 @@
-import sys
-
 from binance import Client
 from xid import Xid
 

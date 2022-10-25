@@ -13,6 +13,9 @@ def make_celery(app):
     fixups=[],
   )
   celery.conf.task_routes = {
+    'cryptos.tasks.binance.spot.tickers.*': {
+      'queue': 'cryptos.tasks.binance.spot.tickers',
+    },
     'cryptos.tasks.binance.spot.klines.*': {
       'queue': 'cryptos.tasks.binance.spot.klines',
     },
