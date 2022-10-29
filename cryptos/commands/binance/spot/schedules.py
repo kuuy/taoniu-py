@@ -8,7 +8,7 @@ bp = Blueprint('schedules', __name__)
 
 @bp.cli.command()
 def apply():
-  interval = celery.schedules.schedule(run_every=5)
+  interval = celery.schedules.schedule(run_every=30)
   entry = RedBeatSchedulerEntry(
     'binance-spot-tickers-flush',
     'cryptos.tasks.binance.spot.tickers.flush',

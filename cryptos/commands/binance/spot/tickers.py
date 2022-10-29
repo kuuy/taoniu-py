@@ -14,3 +14,4 @@ def flush():
   ).all()]
   for i in range(0, len(symbols), 20):
     repository.sync(symbols[i:i + 20])
+    break
