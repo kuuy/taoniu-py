@@ -12,6 +12,9 @@ def scan(symbols, interval):
     'CRYPTO', interval, symbols
   )
   for symbol, item in analysis.items():
+    if item is None:
+      continue
+
     entity = db.session.query(Analysis).filter_by(
       exchange=item.exchange,
       symbol=item.symbol,
