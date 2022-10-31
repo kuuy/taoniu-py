@@ -23,7 +23,7 @@ def flush(limit):
 
 @celery.task(ignore_result=True)
 def fix():
-  now = datetime.now() + timedelta(minutes=-5)
+  now = datetime.now() + timedelta(minutes=-10)
   offset = now.astimezone().utcoffset().total_seconds()
   utc = now + timedelta(seconds=-offset)
   duration = timedelta(hours=8 - utc.hour, minutes=-utc.minute, seconds=-utc.second, microseconds=-utc.microsecond)
