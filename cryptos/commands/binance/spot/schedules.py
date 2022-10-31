@@ -47,6 +47,19 @@ def apply():
   except KeyError:
     entry.save()
 
+  interval = celery.schedules.schedule(run_every=90)
+  entry = RedBeatSchedulerEntry(
+    'binance-spot-klines-daily-fix',
+    'cryptos.tasks.binance.spot.klines.daily.fix',
+    interval,
+    args=[1],
+    app=cryptos.celery
+  )
+  try:
+    entry.load_definition(entry.key)
+  except KeyError:
+    entry.save()
+
   crontab = celery.schedules.crontab(minute=30, hour=0)
   entry = RedBeatSchedulerEntry(
     'binance-spot-klines-daily-flush',
