@@ -46,7 +46,7 @@ def fix(exchange, interval, delay):
     items.append(symbol)
 
   for i in range(0, len(items), 50):
-    repository.scan(['BINANCE:{}'.format(x) for x in items[i:i + 50]], '1m')
+    scan.delay(['BINANCE:{}'.format(x) for x in items[i:i + 50]], '1m')
 
 @celery.task(time_limit=5, ignore_result=True)
 def scan(symbols, interval):
@@ -59,7 +59,7 @@ def scan(symbols, interval):
         ).encode('ascii')
       ),
     ),
-    timeout=5,
+    timeout=10,
   )
   try:
     if not lock.acquire():
