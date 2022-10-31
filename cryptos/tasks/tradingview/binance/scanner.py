@@ -21,10 +21,10 @@ def flush(interval):
     Symbol.status == 'TRADING',
   ).all()]
   for i in range(0, len(symbols), 50):
-    scan.delay(symbols[i:i + 50], interval)
+    scan.delay(['BINANCE:{}'.format(x) for x in symbols[i:i + 50]], interval)
 
 @celery.task(ignore_result=True)
-def fix(exchange, interval, delay):
+def fix(interval, delay):
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
     Symbol.is_spot,
     Symbol.status == 'TRADING',
@@ -34,7 +34,7 @@ def fix(exchange, interval, delay):
   exists = [x[0] for x in db.session.query(
     Analysis.symbol,
   ).filter(
-    Analysis.exchange == exchange,
+    Analysis.exchange == 'BINANCE',
     Analysis.interval == interval,
     Analysis.updated_at > starttime,
   ).all()]
@@ -46,7 +46,7 @@ def fix(exchange, interval, delay):
     items.append(symbol)
 
   for i in range(0, len(items), 50):
-    scan.delay(['BINANCE:{}'.format(x) for x in items[i:i + 50]], '1m')
+    scan.delay(['BINANCE:{}'.format(x) for x in items[i:i + 50]], interval)
 
 @celery.task(time_limit=5, ignore_result=True)
 def scan(symbols, interval):

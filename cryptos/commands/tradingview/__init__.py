@@ -4,8 +4,9 @@ bp = Blueprint('tradingview', __name__)
 
 def register_blueprint():
   from . import (
-    scanner,
+    binance,
     schedules,
   )
-  bp.register_blueprint(scanner.bp)
+  binance.register_blueprint()
+  bp.register_blueprint(binance.bp)
   bp.register_blueprint(schedules.bp)
