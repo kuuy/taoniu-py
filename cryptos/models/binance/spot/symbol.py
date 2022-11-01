@@ -17,9 +17,8 @@ class Symbol(db.Model):
   filters = Column(JSON, nullable=False)
   is_spot = Column(Boolean, nullable=False)
   is_margin = Column(Boolean, nullable=False)
-  is_futures = Column(Boolean, nullable=False)
   status = Column(String(20), nullable=False)
   created_at = Column(DateTime, default=func.now(), nullable=False)
   updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
-  __tablename__ = "binance_symbols"
+  __tablename__ = 'binance_spot_symbols'

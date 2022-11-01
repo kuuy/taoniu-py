@@ -3,26 +3,30 @@ from datetime import (
   timedelta,
 )
 
+import click
 from flask import Blueprint
 
 from cryptos import db
-from cryptos.models.binance.symbol import Symbol
-from cryptos.models.binance.spot.kline import Kline1d
-from cryptos.repositories.binance.spot.klines import daily as repository
+from cryptos.models.binance.futures.symbol import Symbol
+from cryptos.models.binance.futures.kline import Kline
+from cryptos.repositories.binance.futures import klines as repository
 
-bp = Blueprint('daily', __name__)
+bp = Blueprint('klines', __name__)
 
 @bp.cli.command()
-def flush():
+@click.argument('interval', nargs=1)
+@click.argument('limit', type=int)
+def flush(interval, limit):
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
-    Symbol.is_spot,
     Symbol.status == 'TRADING',
   ).all()]
   for symbol in symbols:
-    repository.sync(symbol, 100)
+    repository.sync(symbol, interval, limit)
+    break
 
 @bp.cli.command()
-def fix():
+@click.argument('interval', nargs=1)
+def fix(interval):
   now = datetime.now()+timedelta(minutes=-5)
   offset = now.astimezone().utcoffset().total_seconds()
   utc = now + timedelta(seconds=-offset)
@@ -31,22 +35,23 @@ def fix():
 
   exists = []
   klines = db.session.query(
-    Kline1d.symbol,
-    Kline1d.timestamp,
-    Kline1d.updated_at,
+    Kline.symbol,
+    Kline.timestamp,
+    Kline.updated_at,
   ).filter(
-    Kline1d.timestamp == opentime,
+    Kline.interval == interval,
+    Kline.timestamp == opentime,
   ).all()
   for kline in klines:
     delay = now - kline.updated_at.replace(tzinfo=None)
     if delay.total_seconds() > 300:
-      repository.sync(kline.symbol, 1)
+      repository.sync(kline.symbol, interval, 1)
     exists.append(kline.symbol)
 
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
-    Symbol.is_spot,
+    Symbol.is_futures,
     Symbol.status == 'TRADING',
   ).all()]
   for symbol in symbols:
     if symbol not in exists:
-      repository.sync(kline.symbol, 1)
+      repository.sync(kline.symbol, interval, 1)

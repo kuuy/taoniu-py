@@ -10,8 +10,8 @@ bp = Blueprint('schedules', __name__)
 def apply():
   interval = celery.schedules.schedule(run_every=30)
   entry = RedBeatSchedulerEntry(
-    'binance-spot-tickers-flush',
-    'cryptos.tasks.binance.spot.tickers.flush',
+    'binance-futures-tickers-flush',
+    'cryptos.tasks.binance.futures.tickers.flush',
     interval,
     args=[],
     app=cryptos.celery
@@ -23,8 +23,8 @@ def apply():
 
   interval = celery.schedules.schedule(run_every=15)
   entry = RedBeatSchedulerEntry(
-    'binance-spot-tickers-fix',
-    'cryptos.tasks.binance.spot.tickers.fix',
+    'binance-futures-tickers-fix',
+    'cryptos.tasks.binance.futures.tickers.fix',
     interval,
     args=[],
     app=cryptos.celery
@@ -36,8 +36,8 @@ def apply():
 
   interval = celery.schedules.schedule(run_every=300)
   entry = RedBeatSchedulerEntry(
-    'binance-spot-klines-flush-1d',
-    'cryptos.tasks.binance.spot.klines.flush',
+    'binance-futures-klines-flush-1d',
+    'cryptos.tasks.binance.futures.klines.flush',
     interval,
     args=['1d', 1],
     app=cryptos.celery
@@ -49,8 +49,8 @@ def apply():
 
   interval = celery.schedules.schedule(run_every=60)
   entry = RedBeatSchedulerEntry(
-    'binance-spot-klines-fix-1d',
-    'cryptos.tasks.binance.spot.klines.fix',
+    'binance-futures-klines-fix-1d',
+    'cryptos.tasks.binance.futures.klines.fix',
     interval,
     args=['1d', 1],
     app=cryptos.celery

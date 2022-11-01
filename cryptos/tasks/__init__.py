@@ -19,6 +19,12 @@ def make_celery(app):
     'cryptos.tasks.binance.spot.klines.*': {
       'queue': 'cryptos.tasks.binance.spot.klines',
     },
+    'cryptos.tasks.binance.futures.tickers.*': {
+      'queue': 'cryptos.tasks.binance.futures.tickers',
+    },
+    'cryptos.tasks.binance.futures.klines.*': {
+      'queue': 'cryptos.tasks.binance.futures.klines',
+    },
     'cryptos.tasks.tradingview.*': {
       'queue': 'cryptos.tasks.tradingview',
     },

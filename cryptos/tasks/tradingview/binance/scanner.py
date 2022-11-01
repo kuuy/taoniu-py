@@ -10,25 +10,20 @@ from cryptos import (
   redis,
   celery,
 )
-from cryptos.models.binance.symbol import Symbol
 from cryptos.models.tradingview.analysis import Analysis
+from cryptos.repositories.binance.spot.symbols import symbols as spot_symbols
+from cryptos.repositories.binance.futures.symbols import symbols as futures_symbols
 from cryptos.repositories.tradingview import scanner as repository
 
 @celery.task(ignore_result=True)
 def flush(interval):
-  symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
-    Symbol.is_spot,
-    Symbol.status == 'TRADING',
-  ).all()]
+  symbols = spot_symbols() + futures_symbols()
   for i in range(0, len(symbols), 50):
     scan.delay(['BINANCE:{}'.format(x) for x in symbols[i:i + 50]], interval)
 
 @celery.task(ignore_result=True)
 def fix(interval, delay):
-  symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
-    Symbol.is_spot,
-    Symbol.status == 'TRADING',
-  ).all()]
+  symbols = spot_symbols() + futures_symbols()
 
   starttime = datetime.now() - timedelta(minutes=delay)
   exists = [x[0] for x in db.session.query(

@@ -9,7 +9,6 @@ from cryptos import (
 )
 from cryptos.models.tradingview.analysis import Analysis
 
-
 def scan(symbols, interval):
   port = redis.srandmember('proxies:tor:online')
   if port is None:

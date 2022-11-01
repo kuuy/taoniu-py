@@ -8,7 +8,6 @@ def register_blueprint():
     klines,
     schedules,
   )
-  klines.register_blueprint()
   bp.register_blueprint(tickers.bp)
   bp.register_blueprint(klines.bp)
   bp.register_blueprint(schedules.bp)

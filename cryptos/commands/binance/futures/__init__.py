@@ -4,9 +4,10 @@ bp = Blueprint('futures', __name__)
 
 def register_blueprint():
   from . import (
-    rules,
-    websocket,
+    klines,
+    tickers,
+    schedules,
   )
-  bp.register_blueprint(rules.bp)
-  bp.register_blueprint(websocket.bp)
-
+  bp.register_blueprint(klines.bp)
+  bp.register_blueprint(tickers.bp)
+  bp.register_blueprint(schedules.bp)

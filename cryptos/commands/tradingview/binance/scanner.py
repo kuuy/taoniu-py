@@ -7,7 +7,7 @@ import click
 from flask import Blueprint
 
 from cryptos import db
-from cryptos.models.binance.symbol import Symbol
+from cryptos.models.binance.spot.symbol import Symbol
 from cryptos.models.tradingview.analysis import Analysis
 from cryptos.repositories.tradingview import scanner as repository
 
@@ -23,8 +23,8 @@ def flush(interval):
     '30m',
     '1h',
     '2h',
-    '1d',
     '4h',
+    '1d',
     '1W',
     '1M',
   ]:

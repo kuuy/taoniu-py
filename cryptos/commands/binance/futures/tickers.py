@@ -6,15 +6,14 @@ from cryptos import (
   db,
   redis,
 )
-from cryptos.models.binance.spot.symbol import Symbol
-from cryptos.repositories.binance.spot import tickers as repository
+from cryptos.models.binance.futures.symbol import Symbol
+from cryptos.repositories.binance.futures import tickers as repository
 
 bp = Blueprint('tickers', __name__)
 
 @bp.cli.command()
 def flush():
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
-    Symbol.is_spot,
     Symbol.status == 'TRADING',
   ).all()]
   for i in range(0, len(symbols), 20):
@@ -24,7 +23,6 @@ def flush():
 @bp.cli.command()
 def fix():
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
-    Symbol.is_spot,
     Symbol.status == 'TRADING',
   ).all()]
   fields = [
@@ -41,7 +39,7 @@ def fix():
   end
   local data = {}
   for i = 1, #KEYS do
-    local key = 'binance:spot:realtime:' .. KEYS[i]
+    local key = 'binance:futures:realtime:' .. KEYS[i]
     if redis.call('EXISTS', key) == 0 then
       data[i] = false
     else

@@ -28,7 +28,7 @@ class Kline(db.Model):
     'symbol',
     'interval',
     'timestamp',
-    name='unq_binance_spot_klines_symbol_interval_timestamp',
+    name='unq_binance_futures_klines_symbol_interval_timestamp',
   ),
 
-  __tablename__ = 'binance_spot_klines'
+  __tablename__ = 'binance_futures_klines'

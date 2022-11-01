@@ -8,9 +8,9 @@ from cryptos import (
   db,
   redis,
 )
-from cryptos.models.binance.spot.kline import Kline1d
+from cryptos.models.binance.spot.kline import Kline
 
-def sync(symbol, limit):
+def sync(symbol, interval, limit):
   port = redis.srandmember('proxies:tor:online')
   if port is None:
     return
@@ -26,17 +26,19 @@ def sync(symbol, limit):
         'timeout': 5,
       },
     )
-    klines = client.get_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_1DAY, limit=limit)
+    klines = client.get_klines(symbol=symbol, interval=interval, limit=limit)
     for kline in klines:
       timestamp = kline[0]
-      entity = db.session.query(Kline1d).filter_by(
+      entity = db.session.query(Kline).filter_by(
         symbol=symbol,
+        interval=interval,
         timestamp=timestamp,
       ).first()
       if entity is None:
-        entity = Kline1d(
+        entity = Kline(
           id=Xid().string(),
           symbol=symbol,
+          interval=interval,
           open=float(kline[1]),
           close=float(kline[4]),
           high=float(kline[2]),

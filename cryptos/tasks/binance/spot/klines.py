@@ -8,21 +8,21 @@ from cryptos import (
   redis,
   celery,
 )
-from cryptos.models.binance.symbol import Symbol
-from cryptos.models.binance.spot.kline import Kline1d
-from cryptos.repositories.binance.spot.klines import daily as repository
+from cryptos.models.binance.spot.symbol import Symbol
+from cryptos.models.binance.spot.kline import Kline
+from cryptos.repositories.binance.spot import klines as repository
 
 @celery.task(ignore_result=True)
-def flush(limit):
+def flush(interval, limit):
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
     Symbol.is_spot,
     Symbol.status == 'TRADING',
   ).all()]
   for symbol in symbols:
-    sync.delay(symbol, limit)
+    sync.delay(symbol, interval, limit)
 
 @celery.task(ignore_result=True)
-def fix():
+def fix(interval):
   now = datetime.now() + timedelta(minutes=-10)
   offset = now.astimezone().utcoffset().total_seconds()
   utc = now + timedelta(seconds=-offset)
@@ -31,16 +31,17 @@ def fix():
 
   exists = []
   klines = db.session.query(
-    Kline1d.symbol,
-    Kline1d.timestamp,
-    Kline1d.updated_at,
+    Kline.symbol,
+    Kline.timestamp,
+    Kline.updated_at,
   ).filter(
-    Kline1d.timestamp == opentime,
+    Kline.interval == interval,
+    Kline.timestamp == opentime,
   ).all()
   for kline in klines:
     delay = now - kline.updated_at.replace(tzinfo=None)
     if delay.total_seconds() > 300:
-      sync.delay(kline.symbol, 1)
+      sync.delay(kline.symbol, interval, 1)
     exists.append(kline.symbol)
 
   symbols = [x[0] for x in db.session.query(Symbol.symbol).filter(
@@ -52,10 +53,11 @@ def fix():
       sync.delay(symbol, 1)
 
 @celery.task(time_limit=5, ignore_result=True)
-def sync(symbol, limit):
+def sync(symbol, interval, limit):
   lock = redis.lock(
-    'locks:binance:spot:klines:daily:sync:{}:{}'.format(
+    'locks:binance:spot:klines:sync:{}:{}:{}'.format(
       symbol,
+      interval,
       limit,
     ),
     timeout=5,
@@ -63,7 +65,7 @@ def sync(symbol, limit):
   try:
     if not lock.acquire():
       return
-    repository.sync(symbol, limit)
+    repository.sync(symbol, interval, limit)
   except:
     pass
   finally:
