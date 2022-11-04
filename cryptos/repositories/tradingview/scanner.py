@@ -9,15 +9,18 @@ from cryptos import (
 )
 from cryptos.models.tradingview.analysis import Analysis
 
-def scan(symbols, interval):
-  port = redis.srandmember('proxies:tor:online')
-  if port is None:
-    return
-  proxy = 'socks5://127.0.0.1:{}'.format(port)
-  proxies = {
-    'http': proxy,
-    'https': proxy
-  }
+def scan(symbols, interval, is_proxy=True):
+  if is_proxy:
+    port = redis.srandmember('proxies:tor:online')
+    if port is None:
+      return
+    proxy = 'socks5://127.0.0.1:{}'.format(port)
+    proxies = {
+      'http': proxy,
+      'https': proxy
+    }
+  else:
+    proxies = None
   try:
     analysis = get_multiple_analysis(
       'CRYPTO',
@@ -53,6 +56,8 @@ def scan(symbols, interval):
         entity.summary = item.summary
 
       db.session.add(entity)
+
+      redis.zrem('tradingview:analysis:flush:1m', item.symbol)
 
     db.session.commit()
   except:

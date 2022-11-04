@@ -36,8 +36,8 @@ def sync(symbols):
           redisKey,
           dict(
             symbol=item['symbol'],
-            price=float(item['lastPrice']),
             open=float(item['openPrice']),
+            price=float(item['lastPrice']),
             high=float(item['highPrice']),
             low=float(item['lowPrice']),
             volume=float(item['volume']),

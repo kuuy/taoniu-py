@@ -22,29 +22,17 @@ def flush(interval):
     scan.delay(['BINANCE:{}'.format(x) for x in symbols[i:i + 50]], interval)
 
 @celery.task(ignore_result=True)
-def fix(interval, delay):
-  symbols = spot_symbols() + futures_symbols()
-
-  starttime = datetime.now() - timedelta(minutes=delay)
-  exists = [x[0] for x in db.session.query(
-    Analysis.symbol,
-  ).filter(
-    Analysis.exchange == 'BINANCE',
-    Analysis.interval == interval,
-    Analysis.updated_at > starttime,
-  ).all()]
-
-  items = []
-  for symbol in symbols:
-    if symbol in exists:
-      continue
-    items.append(symbol)
-
-  for i in range(0, len(items), 50):
-    scan.delay(['BINANCE:{}'.format(x) for x in items[i:i + 50]], interval)
+def fix(interval):
+  symbols = redis.zrevrange(
+    'tradingview:analysis:flush:{}'.format(interval),
+    0,
+    -1,
+  )
+  for i in range(0, len(symbols), 20):
+    scan.delay(['BINANCE:{}'.format(x) for x in symbols[i:i + 20]], interval, False)
 
 @celery.task(time_limit=5, ignore_result=True)
-def scan(symbols, interval):
+def scan(symbols, interval, is_proxy=False):
   lock = redis.lock(
     'locks:tradingview:scanner:scan:{}'.format(
       hashlib.md5(
@@ -59,7 +47,7 @@ def scan(symbols, interval):
   try:
     if not lock.acquire():
       return
-    repository.scan(symbols, interval)
+    repository.scan(symbols, interval, is_proxy)
   except:
     pass
   finally:
