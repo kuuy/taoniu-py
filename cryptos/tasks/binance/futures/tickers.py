@@ -26,25 +26,25 @@ def fix():
     'timestamp'
   ]
   lua_script = '''
-    local hmget = function (key)
-      local hash = {}
-      local data = redis.call('HMGET', key, unpack(ARGV))
-      for i = 1, #ARGV do
-        hash[i] = data[i]
-      end
-      return hash
+  local hmget = function (key)
+    local hash = {}
+    local data = redis.call('HMGET', key, unpack(ARGV))
+    for i = 1, #ARGV do
+      hash[i] = data[i]
     end
-    local data = {}
-    for i = 1, #KEYS do
-      local key = 'binance:futures:realtime:' .. KEYS[i]
-      if redis.call('EXISTS', key) == 0 then
-        data[i] = false
-      else
-        data[i] = hmget(key)
-      end
+    return hash
+  end
+  local data = {}
+  for i = 1, #KEYS do
+    local key = 'binance:futures:realtime:' .. KEYS[i]
+    if redis.call('EXISTS', key) == 0 then
+      data[i] = false
+    else
+      data[i] = hmget(key)
     end
-    return data
-    '''
+  end
+  return data
+  '''
   cmd = redis.register_script(lua_script)
   result = cmd(keys=symbols, args=fields)
   timestamp = int(time.time())
