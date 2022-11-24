@@ -10,14 +10,12 @@ from cryptos import (
   redis,
   celery,
 )
-from cryptos.models.tradingview.analysis import Analysis
 from cryptos.repositories.binance.spot.symbols import symbols as spot_symbols
-from cryptos.repositories.binance.futures.symbols import symbols as futures_symbols
 from cryptos.repositories.tradingview import scanner as repository
 
 @celery.task(ignore_result=True)
 def flush(interval):
-  symbols = spot_symbols() + futures_symbols()
+  symbols = spot_symbols()
   for i in range(0, len(symbols), 50):
     scan.delay(['BINANCE:{}'.format(x) for x in symbols[i:i + 50]], interval)
 
