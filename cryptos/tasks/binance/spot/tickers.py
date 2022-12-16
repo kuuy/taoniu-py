@@ -68,7 +68,7 @@ def fix():
 def sync(symbols):
   lock = redis.lock(
     'locks:binance:spot:tickers:sync:{}'.format(
-      hashlib.md5(','.join(symbols).encode('ascii')),
+      hashlib.md5(','.join(symbols).encode('ascii')).hexdigest(),
     ),
     timeout=5,
   )

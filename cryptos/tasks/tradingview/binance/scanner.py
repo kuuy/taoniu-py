@@ -38,7 +38,7 @@ def scan(symbols, interval, is_proxy=False):
           ','.join(symbols),
           interval,
         ).encode('ascii')
-      ),
+      ).hexdigest(),
     ),
     timeout=10,
   )
