@@ -21,6 +21,19 @@ def apply():
   except KeyError:
     entry.save()
 
+  interval = celery.schedules.schedule(run_every=300)
+  entry = RedBeatSchedulerEntry(
+    'binance-spot-depth-flush',
+    'cryptos.tasks.binance.spot.depth.flush',
+    interval,
+    args=[],
+    app=cryptos.celery
+  )
+  try:
+    entry.load_definition(entry.key)
+  except KeyError:
+    entry.save()
+
   interval = celery.schedules.schedule(run_every=15)
   entry = RedBeatSchedulerEntry(
     'binance-spot-tickers-fix',

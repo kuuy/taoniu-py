@@ -15,6 +15,7 @@ class Symbol(db.Model):
   base_asset = Column(String(20), nullable=False)
   quote_asset = Column(String(20), nullable=False)
   filters = Column(JSON, nullable=False)
+  depth = Column(JSON, nullable=False)
   is_spot = Column(Boolean, nullable=False)
   is_margin = Column(Boolean, nullable=False)
   status = Column(String(20), nullable=False)
