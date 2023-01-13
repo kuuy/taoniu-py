@@ -9,3 +9,4 @@ celery[redis]==5.2.7
 celery-redbeat==2.0.0
 python3-xid==1.0.5
 PySocks==1.7.1
+libtorrent==2.0.7

@@ -9,10 +9,7 @@ from binance.exceptions import BinanceAPIException
 from cryptos import redis
 
 def sync(symbols):
-  port = redis.srandmember('proxies:tor:online')
-  if port is None:
-    return
-  proxy = 'socks5://127.0.0.1:{}'.format(port)
+  proxy = 'socks5://127.0.0.1:1088'
   proxies = {
     'http': proxy,
     'https': proxy
@@ -46,15 +43,6 @@ def sync(symbols):
           ),
         )
       pipe.execute()
-  except requests.exceptions.ConnectionError:
-    redis.srem('proxies:tor:online', port)
-    redis.sadd('proxies:tor:offline', port)
-  except BinanceAPIException as e:
-    if 'IP banned' in e.message:
-      redis.srem('proxies:tor:online', port)
-      redis.sadd('proxies:tor:offline', port)
-    else:
-      redis.zincrby('proxies:tor:failed', 1, port)
   except:
-    redis.zincrby('proxies:tor:failed', 1, port)
+    pass
 

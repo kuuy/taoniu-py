@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from tradingview_ta import get_multiple_analysis
 from xid import Xid
 
@@ -11,10 +9,7 @@ from cryptos.models.tradingview.analysis import Analysis
 
 def scan(symbols, interval, is_proxy=True):
   if is_proxy:
-    port = redis.srandmember('proxies:tor:online')
-    if port is None:
-      return
-    proxy = 'socks5://127.0.0.1:{}'.format(port)
+    proxy = 'socks5://127.0.0.1:1088'
     proxies = {
       'http': proxy,
       'https': proxy
@@ -61,4 +56,4 @@ def scan(symbols, interval, is_proxy=True):
 
     db.session.commit()
   except:
-    redis.zincrby('proxies:tor:failed', 1, port)
+    pass
